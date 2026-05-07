@@ -1,11 +1,16 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+
 
 #include "ShooterGameMode.h"
+#include "MainCharacter.h"
+#include "MainPlayerController.h"
 #include "Kismet/GameplayStatics.h"
 #include "TimerManager.h"
 
 AShooterGameMode::AShooterGameMode()
 {
+	DefaultPawnClass = AMainCharacter::StaticClass();
+	PlayerControllerClass = AMainPlayerController::StaticClass();
+
 	Score = 0;
 	TargetScore = 10;
 	TimeLimit = 60.f;

@@ -1,4 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -6,9 +5,7 @@
 #include "GameFramework/GameModeBase.h"
 #include "ShooterGameMode.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class CH3_PROJECT_API AShooterGameMode : public AGameModeBase
 {
