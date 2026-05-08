@@ -2,16 +2,19 @@
 
 #include "MainPlayerController.h"
 #include "EnhancedInputSubsystems.h"
+#include "Blueprint/UserWidget.h"
 
 AMainPlayerController::AMainPlayerController()
     :InputMappingContext(nullptr),
     MoveAction(nullptr),
     JumpAction(nullptr),
     LookAction(nullptr),
-    SprintAction(nullptr)
+    SprintAction(nullptr),
+    HUDWidgetClass(nullptr)
 {
 
 }
+
 
 void AMainPlayerController::BeginPlay()
 {
@@ -30,4 +33,14 @@ void AMainPlayerController::BeginPlay()
             }
         }
     }
+
+    if (HUDWidgetClass)
+    {
+        UUserWidget* HUDWidget = CreateWidget<UUserWidget>(this, HUDWidgetClass);
+        if (HUDWidgetInstance)
+        {
+            HUDWidgetInstance->AddToViewport();
+        }
+    }
+
 }

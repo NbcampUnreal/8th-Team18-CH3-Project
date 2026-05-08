@@ -30,8 +30,22 @@ protected:
 	float SprintSpeedMultiplier;  
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
 	float SprintSpeed; 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Status")
+	float PlayerMaxHP = 100.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Status")
+	float CurrentPlayerHP = 100.f;
+
+	UFUNCTION(BlueprintPure, Category = "Status")
+	float GetHealth() const;
+
+
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	virtual float TakeDamage(
+		float DamageAmount,
+		struct FDamageEvent const& DamageEvent,
+		AController* EventInstigator,
+		AActor* DamageCauser) override;
 
 	UFUNCTION()
 	void Move(const FInputActionValue& value);
@@ -45,5 +59,6 @@ protected:
 	void StartSprint(const FInputActionValue& value);
 	UFUNCTION()
 	void StopSprint(const FInputActionValue& value);
+
 
 };

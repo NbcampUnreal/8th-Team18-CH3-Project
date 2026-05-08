@@ -3,10 +3,12 @@
 
 #include "MainCharacter.h"
 #include "MainPlayerController.h"
+#include "CH3_Project/ShooterGameMode.h"
 #include "EnhancedInputComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+
 
 
 AMainCharacter::AMainCharacter()
@@ -30,6 +32,34 @@ AMainCharacter::AMainCharacter()
 
     GetCharacterMovement()->MaxWalkSpeed = NormalSpeed;
 
+    PlayerMaxHP = 100.0f;
+    CurrentPlayerHP = PlayerMaxHP;
+}
+
+
+
+
+float AMainCharacter::GetHealth() const
+{
+    return CurrentPlayerHP;
+}
+
+
+float AMainCharacter::TakeDamage(float DamageAmount, 
+    FDamageEvent const& DamageEvent,
+    AController* EventInstigator, 
+    AActor* DamageCauser)
+{
+   float ActualDamage =  Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+   CurrentPlayerHP = FMath::Clamp(CurrentPlayerHP - DamageAmount, 0.0f, PlayerMaxHP);
+
+   if (CurrentPlayerHP <= 0.0f)
+   {
+       void GameOver();
+   }
+
+   return ActualDamage;
 }
 
 
@@ -100,6 +130,7 @@ void AMainCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
     }
 }
 
+
 void AMainCharacter::Move(const FInputActionValue& value)
 {
     if (!Controller) return;
@@ -156,3 +187,4 @@ void AMainCharacter::StopSprint(const FInputActionValue& value)
         GetCharacterMovement()->MaxWalkSpeed = NormalSpeed;
     }
 }
+
