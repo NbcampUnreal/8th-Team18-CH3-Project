@@ -1,3 +1,4 @@
+//MainCharacter.h
 
 #pragma once
 
@@ -24,6 +25,11 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
 	UCameraComponent* CameraComp;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+	int32 MaxAmmo;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+	int32 CurrentAmmo;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	float NormalSpeed; 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
@@ -37,6 +43,14 @@ protected:
 
 	UFUNCTION(BlueprintPure, Category = "Status")
 	float GetHealth() const;
+	UFUNCTION(BlueprintPure, Category = "Weapon")
+	int32 GetMaxAmmo() const;
+	UFUNCTION(BlueprintPure, Category = "Weapon")
+	int32 GetCurrentAmmo() const;
+
+
+
+
 
 
 

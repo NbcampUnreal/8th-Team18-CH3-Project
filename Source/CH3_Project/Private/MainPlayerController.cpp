@@ -1,8 +1,8 @@
-
+//MainPlayerController.cpp
 
 #include "MainPlayerController.h"
 #include "EnhancedInputSubsystems.h"
-#include "Blueprint/UserWidget.h"
+#include "UI_Widget.h"
 
 AMainPlayerController::AMainPlayerController()
     :InputMappingContext(nullptr),
@@ -10,7 +10,7 @@ AMainPlayerController::AMainPlayerController()
     JumpAction(nullptr),
     LookAction(nullptr),
     SprintAction(nullptr),
-    HUDWidgetClass(nullptr)
+    UUI_WidgetClass(nullptr)
 {
 
 }
@@ -34,13 +34,20 @@ void AMainPlayerController::BeginPlay()
         }
     }
 
-    if (HUDWidgetClass)
-    {
-        UUserWidget* HUDWidget = CreateWidget<UUserWidget>(this, HUDWidgetClass);
-        if (HUDWidgetInstance)
-        {
-            HUDWidgetInstance->AddToViewport();
-        }
-    }
+}
 
+void AMainPlayerController::OnPossess(APawn* aPawn)
+{
+    Super::OnPossess(aPawn);
+    {
+        if (UUI_WidgetClass)
+        {
+            UUI_WidgetInstance = CreateWidget<UUI_Widget>(this, UUI_WidgetClass);
+            if (UUI_WidgetInstance)
+            {
+                UUI_WidgetInstance->AddToViewport();
+            }
+        }
+
+    }
 }
