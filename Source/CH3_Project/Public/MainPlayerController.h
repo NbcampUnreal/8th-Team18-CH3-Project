@@ -1,3 +1,4 @@
+//MainPlayerController.cpp
 
 #pragma once
 
@@ -33,11 +34,12 @@ public:
 	UInputAction* SprintAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
-	TSubclassOf<class UUserWidget> HUDWidgetClass;
+	TSubclassOf<class UUI_Widget> UUI_WidgetClass;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI")
-	class UUserWidget* HUDWidgetInstance;
+	class UUI_Widget* UUI_WidgetInstance;
 
 
 	virtual void BeginPlay() override;
+	virtual void OnPossess(APawn* aPawn) override;
 };
