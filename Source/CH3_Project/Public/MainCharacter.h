@@ -2,8 +2,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "InputActionValue.h"
+#include "TimerManager.h"
 #include "GameFramework/Character.h"
 #include "MainCharacter.generated.h"
+
 
 class USpringArmComponent;
 class UCameraComponent;
@@ -30,6 +33,22 @@ protected:
 	float SprintSpeedMultiplier;  
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
 	float SprintSpeed; 
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Slide")
+	float SlideCapsuleHalfHeight = 40.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Slide")
+	float NormalCapsuleHalfHeight = 88.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Slide")
+	float SlideDuration = 1.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Slide")
+	float SlideSpeed = 900.0f;
+	UPROPERTY(BlueprintReadOnly, Category = "Slide")
+	bool bIsSliding = false;
+
+	FTimerHandle SlideTimerHandle;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Status")
 	float PlayerMaxHP = 100.f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Status")
@@ -59,6 +78,8 @@ protected:
 	void StartSprint(const FInputActionValue& value);
 	UFUNCTION()
 	void StopSprint(const FInputActionValue& value);
-
-
+	UFUNCTION()
+	void StartSlide(const FInputActionValue& value);
+	UFUNCTION()
+	void StopSlide();
 };

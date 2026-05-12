@@ -6,6 +6,8 @@
 #include "CH3_Project/ShooterGameMode.h"
 #include "EnhancedInputComponent.h"
 #include "Camera/CameraComponent.h"
+#include "Components/CapsuleComponent.h"
+#include "TimerManager.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
@@ -31,6 +33,8 @@ AMainCharacter::AMainCharacter()
     SprintSpeed = NormalSpeed * SprintSpeedMultiplier;
 
     GetCharacterMovement()->MaxWalkSpeed = NormalSpeed;
+    NormalCapsuleHalfHeight =
+        GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight();
 
     PlayerMaxHP = 100.0f;
     CurrentPlayerHP = PlayerMaxHP;
@@ -53,7 +57,10 @@ float AMainCharacter::TakeDamage(float DamageAmount,
    float ActualDamage =  Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
    CurrentPlayerHP = FMath::Clamp(CurrentPlayerHP - DamageAmount, 0.0f, PlayerMaxHP);
-
+   if (CurrentPlayerHP <= PlayerMaxHP * 0.5f)
+   {
+       GetCharacterMovement()->MaxWalkSpeed = NormalSpeed;
+   }
    if (CurrentPlayerHP <= 0.0f)
    {
        void GameOver();
@@ -126,6 +133,15 @@ void AMainCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
                     &AMainCharacter::StopSprint
                 );
             }
+            if (PlayerController->SlideAction)
+            {
+                EnhancedInput->BindAction(
+                    PlayerController->SlideAction,
+                    ETriggerEvent::Started,
+                    this,
+                    &AMainCharacter::StartSlide
+                );
+            }
         }
     }
 }
@@ -174,7 +190,11 @@ void AMainCharacter::Look(const FInputActionValue& value)
 
 void AMainCharacter::StartSprint(const FInputActionValue& value)
 {
-    if (GetCharacterMovement())
+    if (!GetCharacterMovement())
+    {
+        return;
+    }
+    if (CurrentPlayerHP > PlayerMaxHP * 0.5f)
     {
         GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
     }
@@ -188,3 +208,63 @@ void AMainCharacter::StopSprint(const FInputActionValue& value)
     }
 }
 
+void AMainCharacter::StartSlide(const FInputActionValue& value)
+{
+    if (bIsSliding)
+    {
+        return;
+    }
+
+    if (!GetCharacterMovement())
+    {
+        return;
+    }
+
+    
+    if (CurrentPlayerHP <= PlayerMaxHP * 0.5f)
+    {
+        return;
+    }
+
+    
+    if (GetCharacterMovement()->MaxWalkSpeed < SprintSpeed)
+    {
+        return;
+    }
+
+    bIsSliding = true;
+
+
+    GetCapsuleComponent()->SetCapsuleHalfHeight(SlideCapsuleHalfHeight);
+
+    
+    GetCharacterMovement()->MaxWalkSpeed = SlideSpeed;
+
+    
+    SpringArmComp->TargetOffset.Z = -40.0f;
+
+    
+    LaunchCharacter(GetActorForwardVector() * 600.0f, true, true);
+
+ 
+    GetWorldTimerManager().SetTimer(
+        SlideTimerHandle,
+        this,
+        &AMainCharacter::StopSlide,
+        SlideDuration,
+        false
+    );
+}
+void AMainCharacter::StopSlide()
+{
+    bIsSliding = false;
+
+    
+    GetCapsuleComponent()->SetCapsuleHalfHeight(NormalCapsuleHalfHeight);
+
+    
+    GetCharacterMovement()->MaxWalkSpeed = NormalSpeed;
+
+   
+    SpringArmComp->TargetOffset.Z = 0.0f;
+}
