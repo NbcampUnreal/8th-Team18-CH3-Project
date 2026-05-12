@@ -6,6 +6,8 @@
 #include "GameFramework/Character.h"
 #include "EnemyCharacter.generated.h"
 
+class UBehaviorTree;
+
 UCLASS()
 class CH3_PROJECT_API AEnemyCharacter : public ACharacter
 {
@@ -14,53 +16,64 @@ class CH3_PROJECT_API AEnemyCharacter : public ACharacter
 public:
 	AEnemyCharacter();
 
-	// ÃÖ´ë HP
+	// ìµœëŒ€ HP
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy|Stat")
 	float MaxHP;
 
-	// ÇöÀç HP
+	// í˜„ì¬ HP
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Enemy|Stat")
 	float CurrentHP;
 
-	// ¹æ¾î·Â
+	// ë°©ì–´ë ¥
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy|Stat")
 	float Defense;
 
-	// Ã³Ä¡ ½Ã È¹µæ Á¡¼ö
+	// ì²˜ì¹˜ ì‹œ íšë“ ì ìˆ˜
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy|Reward")
 	int32 ScoreValue;
 
-	// °ø°İ µ¥¹ÌÁö
+	// ê³µê²© ë°ë¯¸ì§€
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy|Attack")
 	float AttackDamage;
 
-	// ÇÃ·¹ÀÌ¾î °¨Áö ¹üÀ§
+	// í”Œë ˆì´ì–´ ê°ì§€ ë²”ìœ„
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy|AI")
 	float DetectionRange;
 
-	// °ø°İ °¡´É ¹üÀ§
+	// ê³µê²© ê°€ëŠ¥ ë²”ìœ„
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy|AI")
 	float AttackRange;
 
-	// °ø°İ ÄğÅ¸ÀÓ
+	// BehaviorTree ì—°ê²°
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Enemy|AI")
+	UBehaviorTree* BehaviorTree;
+
+	// ê³µê²© ì¿¨íƒ€ì„
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy|Attack")
 	float AttackCooldown;
 
-	// µ¥¹ÌÁö Ã³¸®
+	// Unreal ê¸°ë³¸ ë°ë¯¸ì§€ ì‹œìŠ¤í…œìœ¼ë¡œ ë°›ì€ ë°ë¯¸ì§€ ì²˜ë¦¬
+	virtual float TakeDamage(
+		float DamageAmount,
+		struct FDamageEvent const& DamageEvent,
+		AController* EventInstigator,
+		AActor* DamageCauser) override;
+
+	// ë°ë¯¸ì§€ ì²˜ë¦¬
 	UFUNCTION(BlueprintCallable)
 	void TakeDamageFromEnemy(float Damage);
 
-	// »ç¸Á ¿©ºÎ È®ÀÎ
+	// ì‚¬ë§ ì—¬ë¶€ í™•ì¸
 	bool IsDead() const;
 
 protected:
-	// °ÔÀÓ ½ÃÀÛ ½Ã ÃÊ±âÈ­
+	// ê²Œì„ ì‹œì‘ ì‹œ ì´ˆê¸°í™”
 	virtual void BeginPlay() override;
 
-	// »ç¸Á Ã³¸®
+	// ì‚¬ë§ ì²˜ë¦¬
 	void Die();
 
 private:
-	// »ç¸Á »óÅÂ
+	// ì‚¬ë§ ìƒíƒœ
 	bool bIsDead;
 };

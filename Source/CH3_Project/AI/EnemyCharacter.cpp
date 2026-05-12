@@ -3,6 +3,8 @@
 #include "EnemyCharacter.h"
 #include "CH3_Project/ShooterGameMode.h"
 #include "Kismet/GameplayStatics.h"
+#include "Components/CapsuleComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 // 적 기본 스탯 설정
 AEnemyCharacter::AEnemyCharacter()
@@ -26,6 +28,25 @@ void AEnemyCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	CurrentHP = MaxHP;
+}
+
+// ApplyDamage로 들어온 데미지를 적 체력 시스템에 반영
+float AEnemyCharacter::TakeDamage(
+	float DamageAmount,
+	FDamageEvent const& DamageEvent,
+	AController* EventInstigator,
+	AActor* DamageCauser)
+{
+	const float ActualDamage = Super::TakeDamage(
+		DamageAmount,
+		DamageEvent,
+		EventInstigator,
+		DamageCauser
+	);
+
+	TakeDamageFromEnemy(DamageAmount);
+
+	return ActualDamage;
 }
 
 // 받은 데미지에서 방어력을 뺀 후 HP 감소
@@ -67,5 +88,7 @@ void AEnemyCharacter::Die()
 		GM->AddScore(ScoreValue);
 	}
 
-	Destroy();
+	GetCharacterMovement()->DisableMovement();
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	SetLifeSpan(2.0f);
 }
