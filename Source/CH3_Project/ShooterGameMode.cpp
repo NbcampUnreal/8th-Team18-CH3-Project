@@ -1,10 +1,13 @@
+//ShooterGameMode.cpp
 
 
 #include "ShooterGameMode.h"
 #include "MainCharacter.h"
 #include "MainPlayerController.h"
+#include "CH3_Project/ShooterGameMode.h"
 #include "Kismet/GameplayStatics.h"
 #include "TimerManager.h"
+
 
 AShooterGameMode::AShooterGameMode()
 {

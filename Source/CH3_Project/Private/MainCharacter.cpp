@@ -1,4 +1,4 @@
-
+//MainCharacter.cpp
 
 
 #include "MainCharacter.h"
@@ -38,6 +38,9 @@ AMainCharacter::AMainCharacter()
 
     PlayerMaxHP = 100.0f;
     CurrentPlayerHP = PlayerMaxHP;
+
+    MaxAmmo = 100.0f;
+    CurrentAmmo = MaxAmmo;
 }
 
 
@@ -45,7 +48,19 @@ AMainCharacter::AMainCharacter()
 
 float AMainCharacter::GetHealth() const
 {
-    return CurrentPlayerHP;
+    if (PlayerMaxHP <= 0.0f) return 0.0f;
+    return CurrentPlayerHP / PlayerMaxHP;
+}
+
+
+int32 AMainCharacter::GetMaxAmmo() const
+{
+    return MaxAmmo;
+}
+
+int32 AMainCharacter::GetCurrentAmmo() const
+{
+    return CurrentAmmo;
 }
 
 
@@ -68,6 +83,8 @@ float AMainCharacter::TakeDamage(float DamageAmount,
 
    return ActualDamage;
 }
+
+
 
 
 
