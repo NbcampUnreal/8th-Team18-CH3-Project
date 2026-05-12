@@ -40,8 +40,6 @@ AMainCharacter::AMainCharacter()
 }
 
 
-
-
 float AMainCharacter::GetHealth() const
 {
     if (PlayerMaxHP <= 0.0f) return 0.0f;
