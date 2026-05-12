@@ -13,7 +13,10 @@ public class CH3_Project : ModuleRules
 			"Engine", 
 			"InputCore", 
 			"EnhancedInput",
-			"UMG"});
+			"UMG",
+			"AIModule",
+            "NavigationSystem",
+            "GameplayTasks" });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
         PublicIncludePaths.AddRange(new string[] {"CH3_Project"});
