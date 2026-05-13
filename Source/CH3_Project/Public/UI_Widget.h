@@ -29,8 +29,6 @@ protected:
 		UImage* Crosshair;
 		UPROPERTY(meta = (BindWidget))
 		UImage* HitMarker;
-		UPROPERTY(meta = (BindWidget))
-		UTextBlock* Score_Text;
 
 
 public:
