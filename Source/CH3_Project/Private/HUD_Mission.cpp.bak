@@ -22,7 +22,7 @@ void UHUD_Mission::GetMission(FString MissionName, int32 CurrentScore, int32 Max
 {
 	if (Mission_Text)
 	{
-		FString MissionString = FString::Printf(TEXT("%s\n\n%d / %d"), *MissionName, CurrentScore, MaxScore);
+		FString MissionString = FString::Printf(TEXT(""), *MissionName, CurrentScore, MaxScore);
 		Mission_Text->SetText(FText::FromString(MissionString));
 	}
 }

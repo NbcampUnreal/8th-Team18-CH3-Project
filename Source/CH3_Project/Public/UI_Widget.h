@@ -19,6 +19,8 @@ public:
 	class AMainCharacter* MyCharacter;
 
 protected:
+	FTimerHandle HitMarkerTimer;
+
 		UPROPERTY(meta = (BindWidget))
 		UProgressBar* HP_Bar;
 		UPROPERTY(meta = (BindWidget))
@@ -26,11 +28,16 @@ protected:
 		UPROPERTY(meta = (BindWidget))
 		UImage* Crosshair;
 		UPROPERTY(meta = (BindWidget))
+		UImage* HitMarker;
+		UPROPERTY(meta = (BindWidget))
 		UTextBlock* Score_Text;
+
 
 public:
 	UFUNCTION()
 	void UpdateHP(float UpdatePlayerHP, float PlayerMaxHP, float CurrentPlayerHP);
-	virtual void NativeConstruct()override;
 	void UpdateAmmo(int32 CurrentAmmo, int32 MaxAmmo);
+	void ShowHitMarker();
+	void HideHitMarker();
+	virtual void NativeConstruct()override;
 };
