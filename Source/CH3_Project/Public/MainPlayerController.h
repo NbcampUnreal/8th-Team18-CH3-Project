@@ -12,6 +12,9 @@
 
 class UInputMappingContext; // IMC 관련 전방 선언
 class UInputAction; // IA 관련 전방 선언
+class UUWP_DamageWidget;
+class UHUD_Mission;
+class UUI_Widget;
 
 UCLASS()
 class CH3_PROJECT_API AMainPlayerController : public APlayerController
@@ -46,6 +49,17 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI")
 	class UUI_Widget* UUI_WidgetInstance;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	TSubclassOf<class UUWP_DamageWidget> UUWP_DamageWidgetClass;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI")
+	class UUWP_DamageWidget* UUWP_DamageWidgettInstance;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	TSubclassOf<class UHUD_Mission> UHUD_MissionClass;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI")
+	class UHUD_Mission* UHUD_MissionInstance;
 
 	virtual void BeginPlay() override;
 	virtual void OnPossess(APawn* aPawn) override;
