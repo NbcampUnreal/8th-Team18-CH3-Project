@@ -1,10 +1,8 @@
-//EnemyBase.cpp
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "EnemyBase.h"
 #include "ShooterGameMode.h"
-#include "MainCharacter.h"
-#include "MainPlayerController.h"
 #include "Kismet/GameplayStatics.h"
 
 AEnemyBase::AEnemyBase()
@@ -29,13 +27,6 @@ void AEnemyBase::TakeDamage(float Damage)
 		if (GM)
 		{
 			GM->AddScore(ScoreValue);
-		}
-
-		AMainCharacter* MainPlayerChar = Cast<AMainCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
-		APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-		if (MainPlayerChar&& PlayerController)
-		{
-			MainPlayerChar->EnemyKilledSignature(PlayerController);
 		}
 
 		Destroy();
