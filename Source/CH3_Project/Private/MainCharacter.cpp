@@ -69,6 +69,15 @@ int32 AMainCharacter::GetCurrentAmmo() const
     return CurrentAmmo;
 }
 
+void AMainCharacter::EnemyKilledSignature(APlayerController* InstigatorController) const
+{
+    EnemyKillUpdate.Broadcast(InstigatorController);
+}
+
+void AMainCharacter::EnemyKillAnimation()
+{
+}
+
 void AMainCharacter::GetMissionProgress(int32 Amount)
 {
     MissionCurrentScore += Amount;

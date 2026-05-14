@@ -10,9 +10,9 @@
 #include "MainCharacter.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FHealthDeadSignature,APlayerController*,Instigator);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FEnemyKilledSignature, APlayerController*,Instigator);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FHealthDamagedSignature,float,UpdatePlayerHP,float,PlayerMaxHP,float,CurrentPlayerHP);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FMissionUpdatedSignature,FString,CurrentMissionName,int32,MissionCurrentScore,int32,MissionMaxScore);
-
 
 class USpringArmComponent;
 class UCameraComponent;
@@ -26,6 +26,7 @@ class CH3_PROJECT_API AMainCharacter : public ACharacter
 public:
 	AMainCharacter();
 
+	UPROPERTY(BlueprintAssignable, Category = "Status")
 	FHealthDamagedSignature HealthDamaged;
 
 	UFUNCTION(BlueprintPure, Category = "Status")
@@ -35,13 +36,19 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Weapon")
 	int32 GetCurrentAmmo() const;
 
+	UPROPERTY(BlueprintAssignable, Category = "Mission")
 	FMissionUpdatedSignature MissionUpdateBoard;
-
 	UFUNCTION(BlueprintCallable, Category = "Mission")
 	void GetMissionProgress(int32 Amount);
 
-protected:
+	UPROPERTY(BlueprintAssignable, Category = "EnemyKill")
+	FEnemyKilledSignature EnemyKillUpdate;
+	UFUNCTION(BlueprintCallable, Category = "EnemyKill")
+	void EnemyKilledSignature(APlayerController* InstigatorController) const;
+	UFUNCTION(BlueprintCallable, Category = "EnemyKill")
+	void EnemyKillAnimation();
 
+protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
 	USpringArmComponent* SpringArmComp;

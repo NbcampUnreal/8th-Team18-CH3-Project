@@ -6,6 +6,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Components/ProgressBar.h"
 #include "Components/TextBlock.h"
+#include "Components/Image.h"
 
 
 void UUI_Widget::NativeConstruct()
@@ -17,7 +18,10 @@ void UUI_Widget::NativeConstruct()
 		MyCharacter->HealthDamaged.AddUniqueDynamic(this, &UUI_Widget::UpdateHP);
 		UpdateHP(MyCharacter->GetHealth(), 100.f, 100.0f);
 	}
-	
+	if (HitMarker)
+	{
+		HitMarker->SetVisibility(ESlateVisibility::Hidden);
+	}
 
 }
 
@@ -40,5 +44,29 @@ void UUI_Widget::UpdateAmmo(int32 CurrentAmmo, int32 MaxAmmo)
 	{
 		FString AmmoString = FString::Printf(TEXT("%d / %d"), CurrentAmmo, MaxAmmo);
 		Ammo_Text->SetText(FText::FromString(AmmoString));
+	}
+}
+
+void UUI_Widget::ShowHitMarker()
+{
+	if (HitMarker)
+	{
+		HitMarker->SetVisibility(ESlateVisibility::HitTestInvisible);
+		GetWorld()->GetTimerManager().ClearTimer(HitMarkerTimer);
+		GetWorld()->GetTimerManager().SetTimer(
+			HitMarkerTimer,
+			this,
+			&UUI_Widget::HideHitMarker,
+			0.8f,
+			false
+		);
+	}
+}
+
+void UUI_Widget::HideHitMarker()
+{
+	if (HitMarker)
+	{
+		HitMarker->SetVisibility(ESlateVisibility::Hidden);
 	}
 }

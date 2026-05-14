@@ -44,6 +44,12 @@ AMainCharacter::AMainCharacter()
 }
 
 
+void AMainCharacter::BeginPlay()
+{
+    Super::BeginPlay();
+
+    
+}
 
 
 float AMainCharacter::GetHealth() const
@@ -63,6 +69,13 @@ int32 AMainCharacter::GetCurrentAmmo() const
     return CurrentAmmo;
 }
 
+void AMainCharacter::GetMissionProgress(int32 Amount)
+{
+    MissionCurrentScore += Amount;
+    MissionCurrentScore = FMath::Clamp(MissionCurrentScore, 0, MissionMaxScore);
+    MissionUpdateBoard.Broadcast(CurrentMissionName, MissionCurrentScore, MissionMaxScore);
+}
+
 
 float AMainCharacter::TakeDamage(float DamageAmount, 
     FDamageEvent const& DamageEvent,
@@ -72,6 +85,8 @@ float AMainCharacter::TakeDamage(float DamageAmount,
    float ActualDamage =  Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
    CurrentPlayerHP = FMath::Clamp(CurrentPlayerHP - DamageAmount, 0.0f, PlayerMaxHP);
+   HealthDamaged.Broadcast(CurrentPlayerHP, PlayerMaxHP, DamageAmount);
+
    if (CurrentPlayerHP <= PlayerMaxHP * 0.5f)
    {
        GetCharacterMovement()->MaxWalkSpeed = NormalSpeed;
@@ -83,9 +98,6 @@ float AMainCharacter::TakeDamage(float DamageAmount,
 
    return ActualDamage;
 }
-
-
-
 
 
 void AMainCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -162,6 +174,7 @@ void AMainCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
         }
     }
 }
+
 
 
 void AMainCharacter::Move(const FInputActionValue& value)
