@@ -17,7 +17,7 @@ void UUI_Widget::NativeConstruct()
 	if (MyCharacter)
 	{
 		MyCharacter->HealthDamaged.AddUniqueDynamic(this, &UUI_Widget::UpdateHP);
-		UpdateHP(MyCharacter->GetHealth(), 100.f, 100.0f);
+		UpdateHP(MyCharacter->CurrentPlayerHP, MyCharacter->PlayerMaxHP, 0.0f);
 	}
 	if (HitMarker)
 	{
@@ -27,8 +27,31 @@ void UUI_Widget::NativeConstruct()
 	if (Kill_Image1)
 	{
 		MyCharacter->EnemyKillUpdate.AddUniqueDynamic(this, &UUI_Widget::ShowKillImage);
-		MyCharacter->EnemyKillAnimation();
+		Kill_Image1->SetVisibility(ESlateVisibility::Hidden);
+		
+	}
+
+}
+
+void UUI_Widget::UpdateHP(float CurrentPlayerHP, float PlayerMaxHP, float DamageAmount)
+{
+	if (HP_Bar)
+	{
+		if (PlayerMaxHP > 0.0f)
+		{
+			float HPPercent = CurrentPlayerHP / PlayerMaxHP;
+			HP_Bar->SetPercent(HPPercent);
+		}
+		
+	}
+}
+
+void UUI_Widget::ShowKillImage(APlayerController* InstigatorController)
+{
+	if (Kill_Image1) 
+	{
 		Kill_Image1->SetVisibility(ESlateVisibility::HitTestInvisible);
+		MyCharacter->EnemyKillAnimation();
 		GetWorld()->GetTimerManager().ClearTimer(KillImageTimer);
 		GetWorld()->GetTimerManager().SetTimer(
 			KillImageTimer,
@@ -38,30 +61,15 @@ void UUI_Widget::NativeConstruct()
 			false
 		);
 	}
-
-
-
-}
-
-void UUI_Widget::UpdateHP(float UpdatePlayerHP, float PlayerMaxHP, float CurrentPlayerHP)
-{
-	if (HP_Bar)
-	{
-		if (PlayerMaxHP > 0.0f)
-		{
-			float HPPercent = CurrentPlayerHP / PlayerMaxHP;
-			HP_Bar->SetPercent(UpdatePlayerHP);
-		}
-		
-	}
-}
-
-void UUI_Widget::ShowKillImage(APlayerController* InstigatorController)
-{
+	
 }
 
 void UUI_Widget::HideKillImage()
 {
+	if (Kill_Image1)
+	{
+		Kill_Image1->SetVisibility(ESlateVisibility::Hidden);
+	}
 }
 
 void UUI_Widget::UpdateAmmo(int32 CurrentAmmo, int32 MaxAmmo)

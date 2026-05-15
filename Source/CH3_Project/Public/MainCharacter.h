@@ -31,6 +31,10 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Status")
 	float GetHealth() const;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Status")
+	float PlayerMaxHP;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Status")
+	float CurrentPlayerHP;
 	UFUNCTION(BlueprintPure, Category = "Weapon")
 	int32 GetMaxAmmo() const;
 	UFUNCTION(BlueprintPure, Category = "Weapon")
@@ -82,10 +86,6 @@ protected:
 	bool bIsSliding = false;
 
 	FTimerHandle SlideTimerHandle;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Status")
-	float PlayerMaxHP = 100.f;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Status")
-	float CurrentPlayerHP = 100.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mission")
 	FString CurrentMissionName = TEXT("Mission Score");
