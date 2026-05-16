@@ -15,6 +15,6 @@ public:
 	UBTDecorator_IsInAttackRange();
 
 protected:
-	// Behavior Tree°¡ ÀÌ Decorator Á¶°ÇÀ» °Ë»çÇÒ ¶§ È£Ãâ
+	// Behavior Treeê°€ ì´ Decorator ì¡°ê±´ì„ ê²€ì‚¬í•  ë•Œ í˜¸ì¶œ
 	virtual bool CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) const override;
 };

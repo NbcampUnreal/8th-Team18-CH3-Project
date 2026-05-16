@@ -13,26 +13,28 @@ class CH3_PROJECT_API AEnemyAIController : public AAIController
 	GENERATED_BODY()
 
 public:
-	// »ı¼ºÀÚ
+	// ìƒì„±ì
 	AEnemyAIController();
 
 protected:
-	// Àû Ä³¸¯ÅÍ¸¦ Á¶Á¾ÇÏ±â ½ÃÀÛÇÒ ¶§ È£Ãâ
+	// ì  ìºë¦­í„°ë¥¼ ì¡°ì¢…í•˜ê¸° ì‹œì‘í•  ë•Œ í˜¸ì¶œ
 	virtual void OnPossess(APawn* InPawn) override;
 
 private:
-	// ÃßÀûÇÒ ÇÃ·¹ÀÌ¾î
+	// í˜„ì¬ ì¶”ì  ì¤‘ì¸ í”Œë ˆì´ì–´ Pawn
 	UPROPERTY()
 	APawn* TargetPlayer;
 
-	// ÇöÀç Á¶Á¾ ÁßÀÎ Àû Ä³¸¯ÅÍ
+	// í˜„ì¬ ì¡°ì¢… ì¤‘ì¸ ì  ìºë¦­í„°
 	UPROPERTY()
 	class AEnemyCharacter* ControlledEnemy;
 
+	// ì£¼ê¸°ì ìœ¼ë¡œ í”Œë ˆì´ì–´ë¥¼ ì°¾ì•„ Blackboardì— ê°±ì‹ í•˜ê¸° ìœ„í•œ íƒ€ì´ë¨¸
 	FTimerHandle FindPlayerTimerHandle;
 
-	// ÇÃ·¹ÀÌ¾î Ã£±â
+	// í˜„ì¬ ì›”ë“œì˜ í”Œë ˆì´ì–´ Pawnì„ ì°¾ìŒ
 	void FindPlayer();
 
+	// ê°ì§€ ë²”ìœ„ì— ë”°ë¼ Blackboardì˜ TargetActorë¥¼ ì„¤ì •í•˜ê±°ë‚˜ ì œê±°
 	void SetTargetPlayer();
 };

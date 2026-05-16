@@ -5,54 +5,55 @@
 #include "AIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
-// Behavior Tree¿¡¼­ º¸ÀÏ ³ëµå ÀÌ¸§
+// Behavior Treeì—ì„œ ë³´ì¼ ë…¸ë“œ ì´ë¦„ ì„¤ì •
 UBTDecorator_IsInAttackRange::UBTDecorator_IsInAttackRange()
 {
-    NodeName = TEXT("Is In Attack Range");
+	NodeName = TEXT("Is In Attack Range");
 }
 
-// TargetActor°¡ ÀûÀÇ °ø°İ ¹üÀ§ ¾È¿¡ ÀÖ´ÂÁö È®ÀÎ
+// TargetActorê°€ ì ì˜ ê³µê²© ë²”ìœ„ ì•ˆì— ìˆëŠ”ì§€ í™•ì¸
 bool UBTDecorator_IsInAttackRange::CalculateRawConditionValue(
-    UBehaviorTreeComponent& OwnerComp,
-    uint8* NodeMemory
+	UBehaviorTreeComponent& OwnerComp,
+	uint8* NodeMemory
 ) const
 {
-    // ÇöÀç Behavior Tree¸¦ ½ÇÇà ÁßÀÎ AIController °¡Á®¿À±â
-    const AAIController* AIController = OwnerComp.GetAIOwner();
-    if (!AIController)
-    {
-        return false;
-    }
+	// í˜„ì¬ Behavior Treeë¥¼ ì‹¤í–‰ ì¤‘ì¸ AIController ê°€ì ¸ì˜¤ê¸°
+	const AAIController* AIController = OwnerComp.GetAIOwner();
+	if (!AIController)
+	{
+		return false;
+	}
 
-    // AIController°¡ Á¶Á¾ ÁßÀÎ PawnÀ» EnemyCharacter·Î º¯È¯
-    const AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(AIController->GetPawn());
-    if (!Enemy || Enemy->IsDead())
-    {
-        return false;
-    }
+	// AIControllerê°€ ì¡°ì¢… ì¤‘ì¸ Pawnì„ EnemyCharacterë¡œ ë³€í™˜
+	const AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(AIController->GetPawn());
+	if (!Enemy || Enemy->IsDead())
+	{
+		return false;
+	}
 
-    // Blackboard¿¡¼­ TargetActor °¡Á®¿À±â
-    const UBlackboardComponent* BlackboardComp = OwnerComp.GetBlackboardComponent();
-    if (!BlackboardComp)
-    {
-        return false;
-    }
+	// Blackboardì—ì„œ TargetActor ê°€ì ¸ì˜¤ê¸°
+	const UBlackboardComponent* BlackboardComp = OwnerComp.GetBlackboardComponent();
+	if (!BlackboardComp)
+	{
+		return false;
+	}
 
-    const AActor* TargetActor = Cast<AActor>(
-        BlackboardComp->GetValueAsObject(TEXT("TargetActor"))
-    );
+	const AActor* TargetActor = Cast<AActor>(
+		BlackboardComp->GetValueAsObject(TEXT("TargetActor"))
+	);
 
-    if (!TargetActor)
-    {
-        return false;
-    }
+	// ê°ì§€ëœ íƒ€ê²Ÿì´ ì—†ìœ¼ë©´ ê³µê²© ë²”ìœ„ ì¡°ê±´ ì‹¤íŒ¨
+	if (!TargetActor)
+	{
+		return false;
+	}
 
-    // Àû°ú Å¸°Ù »çÀÌÀÇ °Å¸®¸¦ °è»ê
-    const float Distance = FVector::Dist(
-        Enemy->GetActorLocation(),
-        TargetActor->GetActorLocation()
-    );
+	// ì ê³¼ íƒ€ê²Ÿ ì‚¬ì´ì˜ ê±°ë¦¬ë¥¼ ê³„ì‚°
+	const float Distance = FVector::Dist(
+		Enemy->GetActorLocation(),
+		TargetActor->GetActorLocation()
+	);
 
-    // °ø°İ ¹üÀ§ ¾ÈÀÌ¸é true, ¾Æ´Ï¸é false
-    return Distance <= Enemy->AttackRange;
+	// ê³µê²© ë²”ìœ„ ì•ˆì´ë©´ true, ì•„ë‹ˆë©´ false
+	return Distance <= Enemy->AttackRange;
 }

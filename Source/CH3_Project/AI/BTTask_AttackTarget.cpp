@@ -5,69 +5,83 @@
 #include "AIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
- // Behavior Tree¿¡¼­ º¸ÀÏ ³ëµå ÀÌ¸§ ¼³Á¤
+// Behavior Treeì—ì„œ ë³´ì¼ ë…¸ë“œ ì´ë¦„ ì„¤ì •
 UBTTask_AttackTarget::UBTTask_AttackTarget()
 {
-    NodeName = TEXT("Attack Target");
+	NodeName = TEXT("Attack Target");
 }
 
-// TargetActor¿¡°Ô µ¥¹ÌÁö¸¦ ÁÖ´Â °ø°İ Task
+// TargetActorë¥¼ ë°”ë¼ë³´ê³  ê³µê²© ëª½íƒ€ì£¼ë¥¼ ì¬ìƒí•˜ëŠ” Task
+// ì‹¤ì œ ë°ë¯¸ì§€ëŠ” ëª½íƒ€ì£¼ì˜ AttackHit Notifyì—ì„œ AEnemyCharacter::ApplyAttackDamageë¡œ ì²˜ë¦¬
 EBTNodeResult::Type UBTTask_AttackTarget::ExecuteTask(
-    UBehaviorTreeComponent& OwnerComp,
-    uint8* NodeMemory
+	UBehaviorTreeComponent& OwnerComp,
+	uint8* NodeMemory
 )
 {
-    // ÇöÀç Behavior Tree¸¦ ½ÇÇà ÁßÀÎ AIController °¡Á®¿À±â
-    AAIController* AIController = OwnerComp.GetAIOwner();
-    if (!AIController)
-    {
-        return EBTNodeResult::Failed;
-    }
+	// í˜„ì¬ Behavior Treeë¥¼ ì‹¤í–‰ ì¤‘ì¸ AIController ê°€ì ¸ì˜¤ê¸°
+	AAIController* AIController = OwnerComp.GetAIOwner();
+	if (!AIController)
+	{
+		return EBTNodeResult::Failed;
+	}
 
-    // AIController°¡ Á¶Á¾ ÁßÀÎ PawnÀ» EnemyCharacter·Î º¯È¯
-    AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(AIController->GetPawn());
-    if (!Enemy || Enemy->IsDead())
-    {
-        return EBTNodeResult::Failed;
-    }
+	// AIControllerê°€ ì¡°ì¢… ì¤‘ì¸ Pawnì„ EnemyCharacterë¡œ ë³€í™˜
+	AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(AIController->GetPawn());
+	if (!Enemy || Enemy->IsDead())
+	{
+		return EBTNodeResult::Failed;
+	}
 
-    // Blackboard¿¡¼­ TargetActor °¡Á®¿À±â
-    UBlackboardComponent* BlackboardComp = OwnerComp.GetBlackboardComponent();
-    if (!BlackboardComp)
-    {
-        return EBTNodeResult::Failed;
-    }
+	// Blackboardì—ì„œ TargetActor ê°€ì ¸ì˜¤ê¸°
+	UBlackboardComponent* BlackboardComp = OwnerComp.GetBlackboardComponent();
+	if (!BlackboardComp)
+	{
+		return EBTNodeResult::Failed;
+	}
 
-    AActor* TargetActor = Cast<AActor>(
-        BlackboardComp->GetValueAsObject(TEXT("TargetActor"))
-    );
+	AActor* TargetActor = Cast<AActor>(
+		BlackboardComp->GetValueAsObject(TEXT("TargetActor"))
+	);
 
-    if (!TargetActor)
-    {
-        return EBTNodeResult::Failed;
-    }
+	if (!TargetActor)
+	{
+		return EBTNodeResult::Failed;
+	}
 
-    // °ø°İ Áß¿¡´Â ÀÌµ¿À» ¸ØÃß°í Å¸°ÙÀ» ¹Ù¶óº¸°Ô ÇÔ
-    AIController->StopMovement();
-    AIController->SetFocus(TargetActor);
+	// ì¿¨íƒ€ì„ ì¤‘ì´ë©´ ê³µê²©í•˜ì§€ ì•ŠìŒ
+	if (!Enemy->CanAttack())
+	{
+		return EBTNodeResult::Failed;
+	}
 
-    // Unreal ±âº» µ¥¹ÌÁö ½Ã½ºÅÛÀ¸·Î ÇÃ·¹ÀÌ¾î¿¡°Ô µ¥¹ÌÁö Àû¿ë
-    UGameplayStatics::ApplyDamage(
-        TargetActor,
-        Enemy->AttackDamage,
-        AIController,
-        Enemy,
-        nullptr
-    );
+	// ê³µê²© ì‹œì‘ ì „ì— ì´ë™ê³¼ AI Focusë¥¼ ì •ë¦¬
+	AIController->StopMovement();
+	AIController->ClearFocus(EAIFocusPriority::Gameplay);
 
-    UE_LOG(
-        LogTemp,
-        Warning,
-        TEXT("Enemy BT Attack: %.1f Damage"),
-        Enemy->AttackDamage
-    );
+	// ì´ì „ ì´ë™ ì…ë ¥ì´ ë‚¨ì•„ ê³µê²© ë°©í–¥ì„ ë°©í•´í•˜ì§€ ì•Šë„ë¡ ì¦‰ì‹œ ì •ì§€
+	Enemy->GetCharacterMovement()->StopMovementImmediately();
 
-    // Task ¼º°ø Ã³¸®
-    return EBTNodeResult::Succeeded;
+	// í”Œë ˆì´ì–´ ë°©í–¥ìœ¼ë¡œ ëª¸ ëŒë¦¬ê¸°
+	FVector Direction = TargetActor->GetActorLocation() - Enemy->GetActorLocation();
+	Direction.Z = 0.f;
+
+	if (!Direction.IsNearlyZero())
+	{
+		// Zì¶•ì„ ì œì™¸í•œ ë°©í–¥ìœ¼ë¡œ íšŒì „í•˜ì—¬ ì ì´ í”Œë ˆì´ì–´ë¥¼ ë°”ë¼ë³´ê²Œ í•¨
+		FRotator LookRotation = Direction.Rotation();
+
+		Enemy->SetActorRotation(LookRotation);
+		AIController->SetControlRotation(LookRotation);
+	}
+
+	// ê³µê²© ì• ë‹ˆë©”ì´ì…˜ ì¬ìƒ
+	Enemy->PlayAttackAnimation();
+
+	// ê³µê²©ì„ ì‹œì‘í•œ ì‹œì ì— ì¿¨íƒ€ì„ ê¸°ë¡
+	Enemy->MarkAttack();
+
+	// Task ì„±ê³µ ì²˜ë¦¬
+	return EBTNodeResult::Succeeded;
 }

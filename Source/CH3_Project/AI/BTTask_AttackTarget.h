@@ -15,6 +15,6 @@ public:
 	UBTTask_AttackTarget();
 
 protected:
-	// Behavior Tree°¡ ÀÌ Task¸¦ ½ÇÇàÇÒ ¶§ È£Ãâ
+	// Behavior Treeê°€ ê³µê²© Taskë¥¼ ì‹¤í–‰í•  ë•Œ í˜¸ì¶œ
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 };
