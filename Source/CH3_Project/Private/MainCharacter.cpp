@@ -280,7 +280,7 @@ void AMainCharacter::StartSlide(const FInputActionValue& value)
     GetCharacterMovement()->MaxWalkSpeed = SlideSpeed;
 
     
-    SpringArmComp->TargetOffset.Z = -40.0f;
+    
 
     
     LaunchCharacter(GetActorForwardVector() * 600.0f, true, true);
