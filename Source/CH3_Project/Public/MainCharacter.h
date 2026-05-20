@@ -70,6 +70,9 @@ protected:
 	float SprintSpeedMultiplier;  
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
 	float SprintSpeed; 
+	UPROPERTY(BlueprintReadOnly, Category = "Movement")
+	bool bIsSprinting = false;
+
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Slide")
 	float SlideCapsuleHalfHeight = 40.0f;
@@ -78,14 +81,22 @@ protected:
 	float NormalCapsuleHalfHeight = 88.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Slide")
-	float SlideDuration = 1.0f;
+	float SlideDuration = 0.5f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Slide")
 	float SlideSpeed = 900.0f;
 	UPROPERTY(BlueprintReadOnly, Category = "Slide")
 	bool bIsSliding = false;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Slide")
+	bool bCanSlide = true;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Slide")
+	float SlideCooldown = 5.0f;
+
+	FTimerHandle SlideCooldownHandle;
 	FTimerHandle SlideTimerHandle;
+	
+	FVector SlideDirection;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mission")
 	FString CurrentMissionName = TEXT("Mission Score");
@@ -113,8 +124,11 @@ protected:
 	void StartSlide(const FInputActionValue& value);
 	UFUNCTION()
 	void StopSlide();
+	UFUNCTION()
+	void ResetSlideCooldown();
 
 	virtual void BeginPlay() override;
+	
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual float TakeDamage(
 		float DamageAmount,

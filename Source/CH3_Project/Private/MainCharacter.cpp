@@ -16,7 +16,7 @@
 AMainCharacter::AMainCharacter()
 {
  	
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 
 
 	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
@@ -33,6 +33,11 @@ AMainCharacter::AMainCharacter()
     SprintSpeed = NormalSpeed * SprintSpeedMultiplier;
 
     GetCharacterMovement()->MaxWalkSpeed = NormalSpeed;
+
+    GetCharacterMovement()->BrakingDecelerationWalking = 2048.0f;
+    GetCharacterMovement()->GroundFriction = 8.0f;
+    GetCharacterMovement()->BrakingFrictionFactor = 2.0f;
+
     NormalCapsuleHalfHeight =
         GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight();
 
@@ -47,7 +52,7 @@ AMainCharacter::AMainCharacter()
 void AMainCharacter::BeginPlay()
 {
     Super::BeginPlay();
-
+    GetCharacterMovement()->bMaintainHorizontalGroundVelocity = true;
     
 }
 
@@ -188,18 +193,27 @@ void AMainCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 void AMainCharacter::Move(const FInputActionValue& value)
 {
-    if (!Controller) return;
+    if (!Controller)
+    {
+        return;
+    }
 
     const FVector2D MoveInput = value.Get<FVector2D>();
 
+    const FRotator ControlRot = Controller->GetControlRotation();
+    const FRotator YawRot(0.f, ControlRot.Yaw, 0.f);
+
+    const FVector Forward = FRotationMatrix(YawRot).GetUnitAxis(EAxis::X);
+    const FVector Right = FRotationMatrix(YawRot).GetUnitAxis(EAxis::Y);
+
     if (!FMath::IsNearlyZero(MoveInput.X))
     {
-        AddMovementInput(GetActorForwardVector(), MoveInput.X);
+        AddMovementInput(Forward, MoveInput.X);
     }
 
     if (!FMath::IsNearlyZero(MoveInput.Y))
     {
-        AddMovementInput(GetActorRightVector(), MoveInput.Y);
+        AddMovementInput(Right, MoveInput.Y);
     }
 }
 
@@ -233,7 +247,7 @@ void AMainCharacter::StartSprint(const FInputActionValue& value)
     {
         return;
     }
-    if (CurrentPlayerHP > PlayerMaxHP * 0.5f)
+    if (!bIsSliding && CurrentPlayerHP > PlayerMaxHP * 0.5f)
     {
         GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
     }
@@ -241,7 +255,11 @@ void AMainCharacter::StartSprint(const FInputActionValue& value)
 
 void AMainCharacter::StopSprint(const FInputActionValue& value)
 {
-    if (GetCharacterMovement())
+    if (!GetCharacterMovement()) return;
+
+    bIsSprinting = false; 
+
+    if (!bIsSliding)
     {
         GetCharacterMovement()->MaxWalkSpeed = NormalSpeed;
     }
@@ -249,43 +267,23 @@ void AMainCharacter::StopSprint(const FInputActionValue& value)
 
 void AMainCharacter::StartSlide(const FInputActionValue& value)
 {
-    if (bIsSliding)
-    {
-        return;
-    }
-
-    if (!GetCharacterMovement())
-    {
-        return;
-    }
-
-    
-    if (CurrentPlayerHP <= PlayerMaxHP * 0.5f)
-    {
-        return;
-    }
-
-    
-    if (GetCharacterMovement()->MaxWalkSpeed < SprintSpeed)
+    // 쿨타임 및 슬라이드 중 체크 (C++에서 확실히 차단)
+    if (bIsSliding || !bCanSlide)
     {
         return;
     }
 
     bIsSliding = true;
+    bCanSlide = false;
 
+    if (GetCharacterMovement())
+    {
+        GetCharacterMovement()->MaxWalkSpeed = SlideSpeed; // 속도 증가 (900.0f)
+    }
 
-    GetCapsuleComponent()->SetCapsuleHalfHeight(SlideCapsuleHalfHeight);
+    // 엔진 내장 크라우치 기능 사용 (바닥 뚫림을 엔진이 자동으로 방지해 줌)
+    Crouch();
 
-    
-    GetCharacterMovement()->MaxWalkSpeed = SlideSpeed;
-
-    
-    
-
-    
-    LaunchCharacter(GetActorForwardVector() * 600.0f, true, true);
-
- 
     GetWorldTimerManager().SetTimer(
         SlideTimerHandle,
         this,
@@ -294,16 +292,38 @@ void AMainCharacter::StartSlide(const FInputActionValue& value)
         false
     );
 }
+
 void AMainCharacter::StopSlide()
 {
     bIsSliding = false;
 
-    
-    GetCapsuleComponent()->SetCapsuleHalfHeight(NormalCapsuleHalfHeight);
+    // 엔진 내장 크라우치 해제
+    UnCrouch();
 
-    
-    GetCharacterMovement()->MaxWalkSpeed = NormalSpeed;
+    if (GetCharacterMovement())
+    {
+        if (bIsSprinting && CurrentPlayerHP > PlayerMaxHP * 0.5f)
+        {
+            GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
+        }
+        else
+        {
+            GetCharacterMovement()->MaxWalkSpeed = NormalSpeed;
+        }
+    }
 
-   
-    SpringArmComp->TargetOffset.Z = 0.0f;
+    // 쿨타임 타이머 시작
+    GetWorldTimerManager().SetTimer(
+        SlideCooldownHandle,
+        this,
+        &AMainCharacter::ResetSlideCooldown,
+        SlideCooldown,
+        false
+    );
 }
+
+void AMainCharacter::ResetSlideCooldown()
+{
+    bCanSlide = true;
+}
+
