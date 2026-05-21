@@ -44,6 +44,9 @@ AMainCharacter::AMainCharacter()
 
     MaxAmmo = 100.0f;
     CurrentAmmo = MaxAmmo;
+
+    WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponMesh"));
+    WeaponMesh->SetupAttachment(GetMesh());
 }
 
 
@@ -52,6 +55,16 @@ void AMainCharacter::BeginPlay()
     Super::BeginPlay();
 
     NormalCapsuleHalfHeight = GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight();
+
+    if (WeaponMesh)
+    {
+        WeaponMesh->AttachToComponent(
+            GetMesh(),
+            FAttachmentTransformRules::SnapToTargetIncludingScale,
+            TEXT("hand_rSocket")
+        );
+
+    }
 }
 
 

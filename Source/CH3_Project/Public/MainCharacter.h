@@ -189,7 +189,8 @@ protected:
 
 
 
-
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon")
+	USkeletalMeshComponent* WeaponMesh;
 
 
 
