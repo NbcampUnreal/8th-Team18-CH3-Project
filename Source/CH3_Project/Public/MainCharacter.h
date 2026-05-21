@@ -1,141 +1,246 @@
 //MainCharacter.h
 
+
+
 #pragma once
 
+
+
 #include "CoreMinimal.h"
+
 #include "InputActionValue.h"
+
 #include "TimerManager.h"
+
 #include "GameFramework/Character.h"
+
 #include "Components/ActorComponent.h"
+
 #include "MainCharacter.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FHealthDeadSignature,APlayerController*,Instigator);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FEnemyKilledSignature, APlayerController*,Instigator);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FHealthDamagedSignature,float,UpdatePlayerHP,float,PlayerMaxHP,float,CurrentPlayerHP);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FMissionUpdatedSignature,FString,CurrentMissionName,int32,MissionCurrentScore,int32,MissionMaxScore);
+
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FHealthDeadSignature, APlayerController*, Instigator);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FEnemyKilledSignature, APlayerController*, Instigator);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FHealthDamagedSignature, float, UpdatePlayerHP, float, PlayerMaxHP, float, CurrentPlayerHP);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FMissionUpdatedSignature, FString, CurrentMissionName, int32, MissionCurrentScore, int32, MissionMaxScore);
+
+
 
 class USpringArmComponent;
+
 class UCameraComponent;
+
 struct FInputActionValue;
 
+
+
 UCLASS()
+
 class CH3_PROJECT_API AMainCharacter : public ACharacter
+
 {
+
 	GENERATED_BODY()
 
+
+
 public:
+
 	AMainCharacter();
 
+
+
 	UPROPERTY(BlueprintAssignable, Category = "Status")
+
 	FHealthDamagedSignature HealthDamaged;
 
+
+
 	UFUNCTION(BlueprintPure, Category = "Status")
+
 	float GetHealth() const;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Status")
+
 	float PlayerMaxHP;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Status")
+
 	float CurrentPlayerHP;
+
 	UFUNCTION(BlueprintPure, Category = "Weapon")
+
 	int32 GetMaxAmmo() const;
+
 	UFUNCTION(BlueprintPure, Category = "Weapon")
+
 	int32 GetCurrentAmmo() const;
 
+
+
 	UPROPERTY(BlueprintAssignable, Category = "Mission")
+
 	FMissionUpdatedSignature MissionUpdateBoard;
+
 	UFUNCTION(BlueprintCallable, Category = "Mission")
+
 	void GetMissionProgress(int32 Amount);
 
+
+
 	UPROPERTY(BlueprintAssignable, Category = "EnemyKill")
+
 	FEnemyKilledSignature EnemyKillUpdate;
+
 	UFUNCTION(BlueprintCallable, Category = "EnemyKill")
+
 	void EnemyKilledSignature(APlayerController* InstigatorController) const;
+
 	UFUNCTION(BlueprintCallable, Category = "EnemyKill")
+
 	void EnemyKillAnimation();
+
+
 
 protected:
 
+
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
+
 	USpringArmComponent* SpringArmComp;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
+
 	UCameraComponent* CameraComp;
 
+
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+
 	int32 MaxAmmo;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+
 	int32 CurrentAmmo;
 
+
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
-	float NormalSpeed; 
+
+	float NormalSpeed;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
-	float SprintSpeedMultiplier;  
+
+	float SprintSpeedMultiplier;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
-	float SprintSpeed; 
-	UPROPERTY(BlueprintReadOnly, Category = "Movement")
-	bool bIsSprinting = false;
+
+	float SprintSpeed;
+
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Slide")
+
 	float SlideCapsuleHalfHeight = 40.0f;
 
+
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Slide")
+
 	float NormalCapsuleHalfHeight = 88.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Slide")
-	float SlideDuration = 0.5f;
+
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Slide")
+
+	float SlideDuration = 1.0f;
+
+
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Slide")
+
 	float SlideSpeed = 900.0f;
+
 	UPROPERTY(BlueprintReadOnly, Category = "Slide")
+
 	bool bIsSliding = false;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Slide")
+
 	bool bCanSlide = true;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Slide")
-	float SlideCooldown = 5.0f;
+	void ResetSlideCooldown();
 
-	FTimerHandle SlideCooldownHandle;
-	FTimerHandle SlideTimerHandle;
-	
-	FVector SlideDirection;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mission")
+
 	FString CurrentMissionName = TEXT("Mission Score");
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mission")
+
 	int32 MissionCurrentScore = 0;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mission")
+
 	int32 MissionMaxScore = 1000;
 
 
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon")
+	USkeletalMeshComponent* WeaponMesh;
+
+
+
+
 
 	UFUNCTION()
+
 	void Move(const FInputActionValue& value);
+
 	UFUNCTION()
+
 	void StartJump(const FInputActionValue& value);
+
 	UFUNCTION()
+
 	void StopJump(const FInputActionValue& value);
+
 	UFUNCTION()
+
 	void Look(const FInputActionValue& value);
+
 	UFUNCTION()
+
 	void StartSprint(const FInputActionValue& value);
+
 	UFUNCTION()
+
 	void StopSprint(const FInputActionValue& value);
+
 	UFUNCTION()
+
 	void StartSlide(const FInputActionValue& value);
+
 	UFUNCTION()
+
 	void StopSlide();
-	UFUNCTION()
-	void ResetSlideCooldown();
+
+
 
 	virtual void BeginPlay() override;
-	
+
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
 	virtual float TakeDamage(
+
 		float DamageAmount,
+
 		struct FDamageEvent const& DamageEvent,
+
 		AController* EventInstigator,
+
 		AActor* DamageCauser) override;
-
-
-
 };
