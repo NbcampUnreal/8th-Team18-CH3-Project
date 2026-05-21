@@ -200,6 +200,24 @@ void AMainCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
                     &AMainCharacter::StartSlide
                 );
             }
+            if (PlayerController->AttackAction)
+            {
+                EnhancedInput->BindAction(
+                    PlayerController->AttackAction,
+                    ETriggerEvent::Started,
+                    this,
+                    &AMainCharacter::Attack
+                );
+            }
+            if (PlayerController->DanceAction)
+            {
+                EnhancedInput->BindAction(
+                    PlayerController->DanceAction,
+                    ETriggerEvent::Started,
+                    this,
+                    &AMainCharacter::StartDance
+                );
+            }
         }
     }
 }
@@ -332,4 +350,35 @@ void AMainCharacter::StopSlide()
 void AMainCharacter::ResetSlideCooldown()
 {
     bCanSlide = true;
+}
+
+void AMainCharacter::Attack()
+{
+    if (bIsAttacking) return;
+
+    bIsAttacking = true;
+
+    FTimerHandle AttackTimerHandle;
+
+    GetWorldTimerManager().SetTimer(
+        AttackTimerHandle,
+        this,
+        &AMainCharacter::StopAttack,
+        0.8f,
+        false
+    );
+}
+
+void AMainCharacter::StopAttack()
+{
+    bIsAttacking = false;
+}
+void AMainCharacter::StartDance()
+{
+    bIsDancing = true;
+}
+
+void AMainCharacter::StopDance()
+{
+    bIsDancing = false;
 }

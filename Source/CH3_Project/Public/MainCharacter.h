@@ -192,10 +192,19 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon")
 	USkeletalMeshComponent* WeaponMesh;
 
+	UPROPERTY(BlueprintReadOnly, Category = "Combat")
+	bool bIsAttacking = false;
+	UFUNCTION()
+	void Attack();
 
+	void StopAttack();
+	UPROPERTY(BlueprintReadOnly, Category = "Dance")
+	bool bIsDancing = false;
+	UFUNCTION()
+	void StartDance();
 
-
-
+	UFUNCTION()
+	void StopDance();
 	UFUNCTION()
 
 	void Move(const FInputActionValue& value);
