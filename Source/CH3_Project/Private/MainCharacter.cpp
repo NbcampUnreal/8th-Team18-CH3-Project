@@ -242,6 +242,10 @@ void AMainCharacter::Move(const FInputActionValue& value)
 
     const FVector2D MoveInput = value.Get<FVector2D>();
 
+    if (!MoveInput.IsNearlyZero())
+    {
+        bIsDancing = false;
+    }
     if (!FMath::IsNearlyZero(MoveInput.X))
     {
         AddMovementInput(GetActorForwardVector(), MoveInput.X);
@@ -255,6 +259,7 @@ void AMainCharacter::Move(const FInputActionValue& value)
 
 void AMainCharacter::StartJump(const FInputActionValue& value)
 {
+    if (bIsDancing) return;
     if (value.Get<bool>())
     {
         Jump();
@@ -367,6 +372,7 @@ void AMainCharacter::ResetSlideCooldown()
 void AMainCharacter::Attack()
 {
     if (bIsAttacking) return;
+    if (bIsDancing) return;
 
     bIsAttacking = true;
 
@@ -385,9 +391,10 @@ void AMainCharacter::StopAttack()
 {
     bIsAttacking = false;
 }
+
 void AMainCharacter::StartDance()
 {
-    bIsDancing = true;
+    bIsDancing = !bIsDancing;
 }
 
 void AMainCharacter::StopDance()
@@ -407,8 +414,26 @@ void AMainCharacter::FireWeapon()
 
 void AMainCharacter::FireGrenade()
 {
+    if (bIsThrowingGrenade) return;
+
+    bIsThrowingGrenade = true;
+
     if (CombatComponent)
     {
         CombatComponent->FireGrenade();
     }
+
+    FTimerHandle GrenadeTimerHandle;
+
+    GetWorldTimerManager().SetTimer(
+        GrenadeTimerHandle,
+        this,
+        &AMainCharacter::StopGrenadeThrow,
+        1.0f,
+        false
+    );
+}
+void AMainCharacter::StopGrenadeThrow()
+{
+    bIsThrowingGrenade = false;
 }

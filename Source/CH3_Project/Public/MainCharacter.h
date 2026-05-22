@@ -208,7 +208,10 @@ protected:
 	bool bIsAttacking = false;
 	UFUNCTION()
 	void Attack();
+	UPROPERTY(BlueprintReadOnly, Category = "Combat")
+	bool bIsThrowingGrenade = false;
 
+	void StopGrenadeThrow();
 	void StopAttack();
 	UPROPERTY(BlueprintReadOnly, Category = "Dance")
 	bool bIsDancing = false;
