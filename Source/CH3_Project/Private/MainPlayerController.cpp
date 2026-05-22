@@ -10,11 +10,12 @@ AMainPlayerController::AMainPlayerController()
     JumpAction(nullptr),
     LookAction(nullptr),
     SprintAction(nullptr),
-    UUI_WidgetClass(nullptr)
+    UUI_WidgetClass(nullptr),
+    WeaponAction(nullptr),
+    GrenadeAction(nullptr)
 {
 
 }
-
 
 void AMainPlayerController::BeginPlay()
 {

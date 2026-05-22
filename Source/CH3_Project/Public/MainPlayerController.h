@@ -1,13 +1,10 @@
-//MainPlayerController.cpp
+// MainPlayerController.cpp
 
 #pragma once
 
 #include "CoreMinimal.h"
-
 #include "GameFramework/PlayerController.h"
-
 #include "MainPlayerController.generated.h"
-
 
 
 class UInputMappingContext; // IMC 관련 전방 선언
@@ -43,11 +40,14 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	UInputAction* SlideAction;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	UInputAction* DanceAction;
-	// 공격 테스트용 생성
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
-	UInputAction* AttackAction;
+	UInputAction* WeaponAction;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
+	UInputAction* GrenadeAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
 	TSubclassOf<class UUI_Widget> UUI_WidgetClass;
