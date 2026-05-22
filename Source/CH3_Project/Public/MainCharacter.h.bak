@@ -7,7 +7,6 @@
 #include "TimerManager.h"
 #include "GameFramework/Character.h"
 #include "Components/ActorComponent.h"
-#include "CombatComponent.h"
 #include "MainCharacter.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FHealthDeadSignature,APlayerController*,Instigator);

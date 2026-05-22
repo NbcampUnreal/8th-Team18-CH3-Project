@@ -43,14 +43,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	UInputAction* SlideAction;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input)
 	UInputAction* DanceAction;
-
+	// 공격 테스트용 생성
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
-	UInputAction* WeaponAction;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
-	UInputAction* GrenadeAction;
+	UInputAction* AttackAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
 	TSubclassOf<class UUI_Widget> UUI_WidgetClass;

@@ -20,7 +20,6 @@
 
 
 
-
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FHealthDeadSignature, APlayerController*, Instigator);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FEnemyKilledSignature, APlayerController*, Instigator);
@@ -34,8 +33,6 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FMissionUpdatedSignature, FString
 class USpringArmComponent;
 
 class UCameraComponent;
-
-class UCombatComponent;
 
 struct FInputActionValue;
 
@@ -194,15 +191,6 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon")
 	USkeletalMeshComponent* WeaponMesh;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat")
-	UCombatComponent* CombatComponent;
-
-	UFUNCTION()
-	void FireWeapon();
-
-	UFUNCTION()
-	void FireGrenade();
 
 	UPROPERTY(BlueprintReadOnly, Category = "Combat")
 	bool bIsAttacking = false;
