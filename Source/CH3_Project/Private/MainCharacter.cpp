@@ -1,5 +1,4 @@
-//MainCharacter.cpp
-
+// MainCharacter.cpp
 
 #include "MainCharacter.h"
 #include "MainPlayerController.h"
@@ -11,8 +10,6 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Battle Logic/CombatComponent.h"
-
-
 
 AMainCharacter::AMainCharacter()
 {
@@ -232,8 +229,6 @@ void AMainCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
     }
 }
 
-
-
 void AMainCharacter::Move(const FInputActionValue& value)
 {
     if (!Controller) return;
@@ -431,6 +426,7 @@ void AMainCharacter::FireGrenade()
         false
     );
 }
+
 void AMainCharacter::StopGrenadeThrow()
 {
     bIsThrowingGrenade = false;
