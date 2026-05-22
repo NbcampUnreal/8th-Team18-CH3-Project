@@ -10,7 +10,6 @@
 #include "TimerManager.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "CombatComponent.h"
 
 
 
@@ -48,8 +47,6 @@ AMainCharacter::AMainCharacter()
 
     WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponMesh"));
     WeaponMesh->SetupAttachment(GetMesh());
-
-    CombatComponent = CreateDefaultSubobject<UCombatComponent>(TEXT("CombatComponent"));
 }
 
 
@@ -203,22 +200,13 @@ void AMainCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
                     &AMainCharacter::StartSlide
                 );
             }
-            if (PlayerController->WeaponAction)
+            if (PlayerController->AttackAction)
             {
                 EnhancedInput->BindAction(
-                    PlayerController->WeaponAction,
+                    PlayerController->AttackAction,
                     ETriggerEvent::Started,
                     this,
-                    &AMainCharacter::FireWeapon
-                );
-            }
-            if (PlayerController->GrenadeAction)
-            {
-                EnhancedInput->BindAction(
-                    PlayerController->GrenadeAction,
-                    ETriggerEvent::Started,
-                    this,
-                    &AMainCharacter::FireGrenade
+                    &AMainCharacter::Attack
                 );
             }
             if (PlayerController->DanceAction)
@@ -400,6 +388,7 @@ void AMainCharacter::StartDance()
 void AMainCharacter::StopDance()
 {
     bIsDancing = false;
+<<<<<<< HEAD
 }
 
 void AMainCharacter::FireWeapon()
@@ -436,4 +425,6 @@ void AMainCharacter::FireGrenade()
 void AMainCharacter::StopGrenadeThrow()
 {
     bIsThrowingGrenade = false;
+=======
+>>>>>>> f789b7dbcc158befc540e0d163a738dd534a1c3d
 }
