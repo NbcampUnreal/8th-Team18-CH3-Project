@@ -309,13 +309,23 @@ void AMainCharacter::StartSlide(const FInputActionValue& value)
 
 
     GetCharacterMovement()->MaxWalkSpeed = SlideSpeed;
+    FVector Dir = GetVelocity().GetSafeNormal2D();
 
+    LaunchCharacter(Dir * 700.f, true, true);
 
     if (GetCapsuleComponent())
     {
         float HeightDifference = NormalCapsuleHalfHeight - SlideCapsuleHalfHeight;
-        GetCapsuleComponent()->SetCapsuleHalfHeight(SlideCapsuleHalfHeight);
 
+        
+        GetCapsuleComponent()->SetCapsuleHalfHeight(
+            SlideCapsuleHalfHeight,
+            true
+        );
+
+        AddActorWorldOffset(FVector(0.f, 0.f, -HeightDifference));
+
+        
         if (GetMesh())
         {
             FVector MeshOffset = GetMesh()->GetRelativeLocation();
@@ -345,8 +355,15 @@ void AMainCharacter::StopSlide()
     if (GetCapsuleComponent())
     {
         float HeightDifference = NormalCapsuleHalfHeight - SlideCapsuleHalfHeight;
-        GetCapsuleComponent()->SetCapsuleHalfHeight(NormalCapsuleHalfHeight);
 
+        GetCapsuleComponent()->SetCapsuleHalfHeight(
+            NormalCapsuleHalfHeight,
+            true
+        );
+
+        AddActorWorldOffset(FVector(0.f, 0.f, HeightDifference));
+
+      
         if (GetMesh())
         {
             FVector MeshOffset = GetMesh()->GetRelativeLocation();
