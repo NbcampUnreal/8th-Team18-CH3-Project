@@ -364,20 +364,12 @@ void AMainCharacter::ResetSlideCooldown()
 
 void AMainCharacter::Attack()
 {
-    if (bIsAttacking) return;
     if (bIsDancing) return;
 
-    bIsAttacking = true;
-
-    FTimerHandle AttackTimerHandle;
-
-    GetWorldTimerManager().SetTimer(
-        AttackTimerHandle,
-        this,
-        &AMainCharacter::StopAttack,
-        0.8f,
-        false
-    );
+    if (FireMontage)
+    {
+        PlayAnimMontage(FireMontage);
+    }
 }
 
 void AMainCharacter::StopAttack()

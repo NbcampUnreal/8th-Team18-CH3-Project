@@ -6,6 +6,7 @@
 #include "InputActionValue.h"
 #include "TimerManager.h"
 #include "GameFramework/Character.h"
+#include "Animation/AnimMontage.h"
 #include "Components/ActorComponent.h"
 #include "MainCharacter.generated.h"
 
@@ -124,6 +125,9 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, Category = "Combat")
 	bool bIsAttacking = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat")
+	UAnimMontage* FireMontage;
 
 	UFUNCTION()
 	void Attack();
