@@ -80,7 +80,7 @@ void AEnemyAIController::SetTargetPlayer()
 		return;
 	}
 
-	const float DistanceToPlayer = FVector::Dist(
+	const float DistanceToPlayer = FVector::Dist2D(
 		ControlledEnemy->GetActorLocation(),
 		TargetPlayer->GetActorLocation()
 	);

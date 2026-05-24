@@ -49,7 +49,7 @@ bool UBTDecorator_IsInAttackRange::CalculateRawConditionValue(
 	}
 
 	// 적과 타겟 사이의 거리를 계산
-	const float Distance = FVector::Dist(
+	const float Distance = FVector::Dist2D(
 		Enemy->GetActorLocation(),
 		TargetActor->GetActorLocation()
 	);

@@ -142,7 +142,7 @@ void AEnemyCharacter::ApplyAttackDamage()
 	}
 
 	// Notify가 늦게 호출되는 동안 플레이어가 멀리 도망간 경우 데미지를 주지 않음
-	const float DistanceToTarget = FVector::Dist(
+	const float DistanceToTarget = FVector::Dist2D(
 		GetActorLocation(),
 		TargetActor->GetActorLocation()
 	);
