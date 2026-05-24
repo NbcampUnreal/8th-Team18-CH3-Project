@@ -33,6 +33,7 @@ void UUI_Widget::NativeConstruct()
 
 }
 
+
 void UUI_Widget::UpdateHP(float CurrentPlayerHP, float PlayerMaxHP, float DamageAmount)
 {
 	if (HP_Bar)
@@ -104,3 +105,35 @@ void UUI_Widget::HideHitMarker()
 		HitMarker->SetVisibility(ESlateVisibility::Hidden);
 	}
 }
+
+void UUI_Widget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
+{
+	AMainCharacter* MainMyCharacter = Cast<AMainCharacter>(MyCharacter);
+	Super::NativeTick(MyGeometry, InDeltaTime);
+
+	if (MainMyCharacter && SlideCooldown_bar)
+	{
+		if (MainMyCharacter->bIsSliding)
+		{
+			CurrentCooldownTime = 3.0f;
+			SlideCooldown_bar->SetVisibility(ESlateVisibility::HitTestInvisible);
+		}
+		else if (CurrentCooldownTime > 0.0f)
+		{
+			CurrentCooldownTime -= InDeltaTime;
+		}
+
+		if (CurrentCooldownTime > 0.0f)
+		{
+			float CooldownPercent = FMath::Clamp(CurrentCooldownTime / 3.0f, 0.0f, 1.0f);
+			SlideCooldown_bar->SetPercent(CooldownPercent);
+		}
+
+		else
+		{
+			SlideCooldown_bar->SetPercent(0.0f);
+			SlideCooldown_bar->SetVisibility(ESlateVisibility::Hidden);
+		}
+	}
+}
+

@@ -25,6 +25,7 @@ private:
 	UPROPERTY()
 	class UUserWidget* MainMenuWidgetInstance;
 	void SetupMainMenuCamera();
+	
 
 	
 };

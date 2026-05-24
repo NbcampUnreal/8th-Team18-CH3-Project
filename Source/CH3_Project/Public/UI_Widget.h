@@ -32,6 +32,10 @@ protected:
 		UImage* HitMarker;
 		UPROPERTY(meta = (BindWidget))
 		UImage* Kill_Image1;
+		UPROPERTY(meta = (BindWidget))
+		UProgressBar* SlideCooldown_bar;
+
+		float CurrentCooldownTime = 0.0f;
 
 
 public:
@@ -43,11 +47,12 @@ public:
 	void HideKillImage();
 
 
-
+	
 	void HideHitMarker();
 	void UpdateAmmo(int32 CurrentAmmo, int32 MaxAmmo);
 	void ShowHitMarker();
 
 
 	virtual void NativeConstruct()override;
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 };

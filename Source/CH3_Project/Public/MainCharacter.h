@@ -28,6 +28,7 @@ class CH3_PROJECT_API AMainCharacter : public ACharacter
 public:
 	AMainCharacter();
 
+
 	UPROPERTY(BlueprintAssignable, Category = "Status")
 	FHealthDamagedSignature HealthDamaged;
 
@@ -60,6 +61,10 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "EnemyKill")
 	void EnemyKillAnimation();
+
+	UPROPERTY(BlueprintReadOnly, Category = "Slide")
+	bool bIsSliding = false;
+
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
@@ -95,8 +100,6 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Slide")
 	float SlideSpeed = 900.0f;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Slide")
-	bool bIsSliding = false;
 
 	bool bCanSlide = true;
 
@@ -178,6 +181,7 @@ protected:
 	UFUNCTION()
 
 	void StopSlide();
+
 
 
 
