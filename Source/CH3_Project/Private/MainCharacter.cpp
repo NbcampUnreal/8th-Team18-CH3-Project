@@ -121,6 +121,7 @@ float AMainCharacter::TakeDamage(float DamageAmount,
     }
     if (CurrentPlayerHP <= 0.0f)
     {
+        Die();
         AShooterGameMode* GM =
             Cast<AShooterGameMode>(UGameplayStatics::GetGameMode(this));
 
@@ -447,4 +448,33 @@ void AMainCharacter::StopGrenadeThrow()
 {
     bIsThrowingGrenade = false;
 
+}
+
+void AMainCharacter::Die()
+{
+    if (bIsDead) return;
+
+    bIsDead = true;
+
+    GetCharacterMovement()->DisableMovement();
+
+    APlayerController* PC = Cast<APlayerController>(GetController());
+
+    if (PC)
+    {
+        DisableInput(PC);
+    }
+
+    GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+
+    if (SpringArmComp)
+    {
+        
+        SpringArmComp->TargetArmLength = 500.f;
+
+        SpringArmComp->SetRelativeRotation(FRotator(-60.f, 0.f, 0.f));
+
+        SpringArmComp->SocketOffset = FVector(0.f, 0.f, 120.f);
+    }
 }

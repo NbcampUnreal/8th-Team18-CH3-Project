@@ -151,6 +151,11 @@ protected:
 	UFUNCTION()
 	void StopDance();
 
+	UPROPERTY(BlueprintReadOnly, Category = "State")
+	bool bIsDead = false;
+
+	void Die();
+
 	UFUNCTION()
 	void Move(const FInputActionValue& value);
 
