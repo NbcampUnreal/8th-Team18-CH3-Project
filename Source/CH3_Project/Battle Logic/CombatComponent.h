@@ -9,6 +9,9 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnHitTargetDelegate);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnKillTargetDelegate);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAmmoChangedDelegate, int32, NewAmmo); // 팀원 UI를 위한 총알 변경 알림 추가
 
+class UParticleSystem;
+class USoundBase;
+
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class CH3_PROJECT_API UCombatComponent : public UActorComponent
 {
@@ -53,6 +56,17 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Combat|Skill - Grenade")
 	float GrenadeCooldown = 5.0f;
+
+	// ===========공격 이펙트, 사운드=========== //
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat|FX")
+	UParticleSystem* WeaponEffect;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat|FX")
+	USoundBase* WeaponSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat|FX")
+	float WeaponSoundVolume = 0.3f;
+	// ===========공격 이펙트, 사운드=========== //
 
 private:
 	// 🔫 기본 공격 스탯 & 쿨타임

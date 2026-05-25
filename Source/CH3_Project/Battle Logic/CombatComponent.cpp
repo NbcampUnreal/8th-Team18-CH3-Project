@@ -66,6 +66,28 @@ void UCombatComponent::FireWeapon()
 	else
 		MuzzleLocation = Owner->GetActorLocation();
 
+	// ===========공격 이펙트, 사운드=========== //
+	if (WeaponEffect)
+	{
+		UGameplayStatics::SpawnEmitterAtLocation(
+			GetWorld(),
+			WeaponEffect,
+			MuzzleLocation,
+			CameraRot
+		);
+	}
+
+	if (WeaponSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(
+			GetWorld(),
+			WeaponSound,
+			MuzzleLocation,
+			WeaponSoundVolume
+		);
+	}
+	// ===========공격 이펙트, 사운드=========== //
+
 	FVector VisualEnd = bHit ? HitResult.ImpactPoint : TraceEnd;
 	DrawDebugLine(GetWorld(), MuzzleLocation, VisualEnd, FColor::Red, false, 1.0f, 0, 2.0f);
 
