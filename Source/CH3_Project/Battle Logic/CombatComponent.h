@@ -7,6 +7,7 @@
 // 💡 UI 연동을 위한 델리게이트(신호기) 선언
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnHitTargetDelegate);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnKillTargetDelegate);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAmmoChangedDelegate, int32, NewAmmo); // 팀원 UI를 위한 총알 변경 알림 추가
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class CH3_PROJECT_API UCombatComponent : public UActorComponent
@@ -22,12 +23,19 @@ public:
 	void FireGrenade();       // 유탄 발사
 	void Reload();            // 장전 기능
 
-	// === 🎯 UI 신호기 (블루프린트에서 바인딩 가능) ===
+	// 🎯 적이 죽었을 때 외부(적 블루프린트 등)에서 호출해 줄 킬 확인 함수
+	UFUNCTION(BlueprintCallable, Category = "Combat|UI")
+	void NotifyKill();
+
+	// === 🎯 UI 신호기 (팀원 위젯 블루프린트에서 바인딩해서 사용) ===
 	UPROPERTY(BlueprintAssignable, Category = "Combat|UI")
 	FOnHitTargetDelegate OnHitTarget;
 
 	UPROPERTY(BlueprintAssignable, Category = "Combat|UI")
 	FOnKillTargetDelegate OnKillTarget;
+
+	UPROPERTY(BlueprintAssignable, Category = "Combat|UI")
+	FOnAmmoChangedDelegate OnAmmoChanged;
 
 	// === 탄창 및 상태 변수 ===
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat")
