@@ -9,6 +9,7 @@
 #include "TimerManager.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "Battle Logic/CombatComponent.h"
 
 AMainCharacter::AMainCharacter()
@@ -120,7 +121,13 @@ float AMainCharacter::TakeDamage(float DamageAmount,
     }
     if (CurrentPlayerHP <= 0.0f)
     {
-        void GameOver();
+        AShooterGameMode* GM =
+            Cast<AShooterGameMode>(UGameplayStatics::GetGameMode(this));
+
+        if (GM)
+        {
+            GM->GameOver(false);
+        }
     }
 
     return ActualDamage;

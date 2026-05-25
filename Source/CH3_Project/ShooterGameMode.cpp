@@ -7,6 +7,7 @@
 #include "CH3_Project/ShooterGameMode.h"
 #include "Kismet/GameplayStatics.h"
 #include "TimerManager.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 
 AShooterGameMode::AShooterGameMode()
@@ -16,7 +17,7 @@ AShooterGameMode::AShooterGameMode()
 
 	Score = 0;
 	TargetScore = 10;
-	TimeLimit = 60.f;
+	TimeLimit = 999999.f;
 	RemainingTime = TimeLimit;
 	bGameOver = false;
 }
@@ -81,5 +82,10 @@ void AShooterGameMode::GameOver(bool bClear)
 	if (PlayerPawn)
 	{
 		PlayerPawn->DisableInput(nullptr);
+
+		if (ACharacter* Character = Cast<ACharacter>(PlayerPawn))
+		{
+			Character->GetCharacterMovement()->DisableMovement();
+		}
 	}
 }
