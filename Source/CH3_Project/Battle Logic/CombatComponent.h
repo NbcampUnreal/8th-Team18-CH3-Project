@@ -11,6 +11,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAmmoChangedDelegate, int32, NewAm
 
 class UParticleSystem;
 class USoundBase;
+class AGrenadeProjectile;
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class CH3_PROJECT_API UCombatComponent : public UActorComponent
@@ -66,6 +67,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat|FX")
 	float WeaponSoundVolume = 0.3f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat|Skill - Grenade")
+	TSubclassOf<AGrenadeProjectile> GrenadeProjectileClass;
 	// ===========공격 이펙트, 사운드=========== //
 
 private:

@@ -5,6 +5,8 @@
 #include "GameFramework/Character.h"
 #include "GameFramework/PlayerController.h" 
 #include "TimerManager.h" 
+#include "GrenadeProjectile.h"
+#include "Particles/ParticleSystemComponent.h"
 
 UCombatComponent::UCombatComponent()
 {
@@ -66,15 +68,34 @@ void UCombatComponent::FireWeapon()
 	else
 		MuzzleLocation = Owner->GetActorLocation();
 
-	// ===========공격 이펙트, 사운드=========== //
+	// =========== 공격 이펙트, 사운드 추가 =========== //
 	if (WeaponEffect)
 	{
-		UGameplayStatics::SpawnEmitterAtLocation(
-			GetWorld(),
-			WeaponEffect,
-			MuzzleLocation,
-			CameraRot
-		);
+		UParticleSystemComponent* SpawnedWeaponEffect =
+			UGameplayStatics::SpawnEmitterAtLocation(
+				GetWorld(),
+				WeaponEffect,
+				MuzzleLocation,
+				CameraRot
+			);
+
+		if (SpawnedWeaponEffect)
+		{
+			FTimerHandle WeaponEffectTimerHandle;
+
+			GetWorld()->GetTimerManager().SetTimer(
+				WeaponEffectTimerHandle,
+				[SpawnedWeaponEffect]()
+				{
+					if (IsValid(SpawnedWeaponEffect))
+					{
+						SpawnedWeaponEffect->DestroyComponent();
+					}
+				},
+				1.0f,
+				false
+			);
+		}
 	}
 
 	if (WeaponSound)
@@ -86,7 +107,7 @@ void UCombatComponent::FireWeapon()
 			WeaponSoundVolume
 		);
 	}
-	// ===========공격 이펙트, 사운드=========== //
+	// =========== 공격 이펙트, 사운드 추가 =========== //
 
 	FVector VisualEnd = bHit ? HitResult.ImpactPoint : TraceEnd;
 	DrawDebugLine(GetWorld(), MuzzleLocation, VisualEnd, FColor::Red, false, 1.0f, 0, 2.0f);
@@ -116,41 +137,123 @@ void UCombatComponent::NotifyKill()
 // 💣 유탄 발사
 void UCombatComponent::FireGrenade()
 {
+	// ===================== 기존 코드 ===================== //
+	//if (!bCanUseGrenade || bIsReloading || CurrentAmmo <= 0) return;
+
+	//// 유탄 발사 시에도 총알 감소 및 UI 알림
+	//CurrentAmmo--;
+	//OnAmmoChanged.Broadcast(CurrentAmmo);
+
+	//bCanUseGrenade = false;
+	//GetWorld()->GetTimerManager().SetTimer(GrenadeTimer, this, &UCombatComponent::ResetGrenadeCooldown, GrenadeCooldown, false);
+
+	//AActor* Owner = GetOwner();
+	//if (!Owner) return;
+
+	//ACharacter* CharOwner = Cast<ACharacter>(Owner);
+	//FVector ShootDirection = Owner->GetActorForwardVector();
+	//FVector BaseStart = Owner->GetActorLocation();
+
+	//if (CharOwner)
+	//{
+	//	if (APlayerController* PC = Cast<APlayerController>(CharOwner->GetController()))
+	//	{
+	//		FVector CameraLoc;
+	//		FRotator CameraRot;
+	//		PC->GetPlayerViewPoint(CameraLoc, CameraRot);
+	//		ShootDirection = CameraRot.Vector();
+	//		BaseStart = CameraLoc;
+	//	}
+	//}
+
+	//FVector ExplodeLocation = BaseStart + (ShootDirection * 400.f);
+	//DrawDebugSphere(GetWorld(), ExplodeLocation, GrenadeRadius, 16, FColor::Purple, false, 2.0f, 0, 1.5f);
+
+	//TArray<AActor*> IgnoreActors;
+	//IgnoreActors.Add(Owner);
+
+	//UGameplayStatics::ApplyRadialDamage(GetWorld(), GrenadeDamage, ExplodeLocation, GrenadeRadius, UDamageType::StaticClass(), IgnoreActors, Owner, Owner->GetInstigatorController(), true);
+
+	// ===================== 기존 코드 ===================== //
+
+	// ===================== 투사체 및 파티클 적용 코드 ===================== //
 	if (!bCanUseGrenade || bIsReloading || CurrentAmmo <= 0) return;
 
-	// 유탄 발사 시에도 총알 감소 및 UI 알림
+	AActor* Owner = GetOwner();
+	if (!Owner || !GrenadeProjectileClass) return;
+
 	CurrentAmmo--;
 	OnAmmoChanged.Broadcast(CurrentAmmo);
 
 	bCanUseGrenade = false;
-	GetWorld()->GetTimerManager().SetTimer(GrenadeTimer, this, &UCombatComponent::ResetGrenadeCooldown, GrenadeCooldown, false);
-
-	AActor* Owner = GetOwner();
-	if (!Owner) return;
+	GetWorld()->GetTimerManager().SetTimer(
+		GrenadeTimer,
+		this,
+		&UCombatComponent::ResetGrenadeCooldown,
+		GrenadeCooldown,
+		false
+	);
 
 	ACharacter* CharOwner = Cast<ACharacter>(Owner);
+
+	FVector SpawnLocation = Owner->GetActorLocation();
 	FVector ShootDirection = Owner->GetActorForwardVector();
-	FVector BaseStart = Owner->GetActorLocation();
 
 	if (CharOwner)
 	{
+		if (CharOwner->GetMesh()->DoesSocketExist(TEXT("hand_rSocket")))
+		{
+			SpawnLocation = CharOwner->GetMesh()->GetSocketLocation(TEXT("hand_rSocket"));
+		}
+
 		if (APlayerController* PC = Cast<APlayerController>(CharOwner->GetController()))
 		{
 			FVector CameraLoc;
 			FRotator CameraRot;
 			PC->GetPlayerViewPoint(CameraLoc, CameraRot);
-			ShootDirection = CameraRot.Vector();
-			BaseStart = CameraLoc;
+
+			FVector TraceStart = CameraLoc;
+			FVector TraceEnd = TraceStart + CameraRot.Vector() * 3000.f;
+
+			FHitResult HitResult;
+			FCollisionQueryParams Params;
+			Params.AddIgnoredActor(Owner);
+
+			bool bHit = GetWorld()->LineTraceSingleByChannel(
+				HitResult,
+				TraceStart,
+				TraceEnd,
+				ECC_Visibility,
+				Params
+			);
+
+			FVector TargetPoint = bHit ? HitResult.ImpactPoint : TraceEnd;
+
+			ShootDirection = (TargetPoint - SpawnLocation).GetSafeNormal();
 		}
 	}
 
-	FVector ExplodeLocation = BaseStart + (ShootDirection * 400.f);
-	DrawDebugSphere(GetWorld(), ExplodeLocation, GrenadeRadius, 16, FColor::Purple, false, 2.0f, 0, 1.5f);
+	SpawnLocation += ShootDirection * 40.f;
+	SpawnLocation += FVector(0.f, 0.f, 10.f);
 
-	TArray<AActor*> IgnoreActors;
-	IgnoreActors.Add(Owner);
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = Owner;
+	SpawnParams.Instigator = Cast<APawn>(Owner);
+	SpawnParams.SpawnCollisionHandlingOverride =
+		ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 
-	UGameplayStatics::ApplyRadialDamage(GetWorld(), GrenadeDamage, ExplodeLocation, GrenadeRadius, UDamageType::StaticClass(), IgnoreActors, Owner, Owner->GetInstigatorController(), true);
+	AGrenadeProjectile* Grenade = GetWorld()->SpawnActor<AGrenadeProjectile>(
+		GrenadeProjectileClass,
+		SpawnLocation,
+		ShootDirection.Rotation(),
+		SpawnParams
+	);
+
+	if (Grenade)
+	{
+		Grenade->SetExplosionData(GrenadeDamage, GrenadeRadius);
+	}
+	// ===================== 투사체 및 파티클 적용 코드 ===================== //
 }
 
 void UCombatComponent::ResetGrenadeCooldown() { bCanUseGrenade = true; }
