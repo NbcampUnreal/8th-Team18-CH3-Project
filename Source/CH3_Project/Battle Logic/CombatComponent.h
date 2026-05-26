@@ -23,8 +23,13 @@ public:
 	virtual void BeginPlay() override;
 
 	// === 전투 기능들 ===
+	UFUNCTION(BlueprintCallable, Category = "Combat")
 	void FireWeapon();        // 기본 공격
+
+	UFUNCTION(BlueprintCallable, Category = "Combat")
 	void FireGrenade();       // 유탄 발사
+
+	UFUNCTION(BlueprintCallable, Category = "Combat")
 	void Reload();            // 장전 기능
 
 	// 🎯 적이 죽었을 때 외부(적 블루프린트 등)에서 호출해 줄 킬 확인 함수
