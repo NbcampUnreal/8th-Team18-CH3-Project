@@ -208,5 +208,5 @@ void AEnemyCharacter::Die()
 	PlayDeathAnimation();
 
 	// 사망 애니메이션이 보일 시간을 준 뒤 액터 제거
-	SetLifeSpan(3.0f);
+	SetLifeSpan(2.5f);
 }
