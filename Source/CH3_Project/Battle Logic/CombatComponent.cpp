@@ -265,6 +265,22 @@ void UCombatComponent::Reload()
 
 	bIsReloading = true;
 	UE_LOG(LogTemp, Log, TEXT("장전 중..."));
+	// ================= 애니메이션 재생 =================
+
+	ACharacter* CharOwner = Cast<ACharacter>(GetOwner());
+
+	if (CharOwner)
+	{
+		UAnimInstance* AnimInstance =
+			CharOwner->GetMesh()->GetAnimInstance();
+
+		if (AnimInstance && ReloadMontage)
+		{
+			AnimInstance->Montage_Play(ReloadMontage);
+		}
+	}
+
+	// ================= 애니메이션 재생 =================
 
 	FTimerHandle ReloadTimer;
 	GetWorld()->GetTimerManager().SetTimer(ReloadTimer, [this]()

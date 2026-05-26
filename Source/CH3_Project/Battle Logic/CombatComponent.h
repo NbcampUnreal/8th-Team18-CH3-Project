@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Animation/AnimMontage.h"
 #include "CombatComponent.generated.h"
 
 // 💡 UI 연동을 위한 델리게이트(신호기) 선언
@@ -77,6 +78,9 @@ public:
 	TSubclassOf<AGrenadeProjectile> GrenadeProjectileClass;
 	// ===========공격 이펙트, 사운드=========== //
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat|Animation")
+	UAnimMontage* ReloadMontage;
+
 private:
 	// 🔫 기본 공격 스탯 & 쿨타임
 	UPROPERTY(EditAnywhere, Category = "Combat|Basic")
@@ -93,4 +97,6 @@ private:
 	bool bCanUseGrenade;
 	FTimerHandle GrenadeTimer;
 	void ResetGrenadeCooldown();
+
+	
 };

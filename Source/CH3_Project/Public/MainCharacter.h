@@ -156,6 +156,7 @@ protected:
 
 	void Die();
 
+	
 	UFUNCTION()
 	void Move(const FInputActionValue& value);
 
